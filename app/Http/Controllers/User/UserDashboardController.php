@@ -49,12 +49,14 @@ class UserDashboardController extends Controller
                 'name'         => $d->name,
                 'relationship' => $d->relationship,
             ]) ?? [],
-            'claims' => $member->claims?->map(fn ($c) => [
-                'id'             => $c->claim_no,
-                'deceasedName'   => $c->deceased_name,
-                'submissionDate' => $c->submitted_at?->format('M d, Y'),
-                'status'         => $c->status,
-                'payout'         => $c->payout_amount ? 'RM '.number_format($c->payout_amount, 2) : null,
+            'claims' => $member->claims()
+            ->latest()
+            ->get()
+            ->map(fn($c) => [
+                'id' => $c->id,
+                'deceasedName' => $this->lookupName($c->deceased_person_id),
+                'submissionDate' => $c->created_at->format('M d, Y'),
+                'status' => $c->status,
             ]) ?? [],
             'payments' => $member->transactions?->map(fn ($p) => [
                 'id'     => $p->id,
@@ -69,4 +71,18 @@ class UserDashboardController extends Controller
 
         return Inertia::render('UserDashboard', $props);
     }
+
+    private function lookupName($id): string 
+    {
+        if ($member = \App\Models\Member::find($id)) {
+            return $member->user->name ?? 'Member';
+        }
+        if ($dep = \App\Models\Dependent::find($id)) {
+            return $dep->name;
+        }
+        return 'Unknown';
+    }
 }
+
+
+

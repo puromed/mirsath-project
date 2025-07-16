@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Transaction;
-
+use App\Models\Claim;
 // import user model
 use App\Models\User;
 
@@ -55,6 +55,12 @@ class Member extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    // claims relationship
+    public function claims()
+    {
+        return $this->hasMany(Claim::class);
     }
 
     

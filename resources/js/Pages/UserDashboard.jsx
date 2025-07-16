@@ -24,7 +24,8 @@ import {
     ReloadIcon,
     UpdateIcon,
     TrashIcon,
-    CheckCircledIcon
+    CheckCircledIcon,
+    Cross2Icon
 } from '@radix-ui/react-icons';
 import UserLayout from '@/Layouts/UserLayout';
 
@@ -70,6 +71,30 @@ export default function UserDashboard() {
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
     const [paymentStep, setPaymentStep] = useState('initial'); // 'initial', 'processing', 'completed'
 
+    // ----- Claim Modal State & Form -----
+    const [isClaimModalOpen, setClaimModalOpen] = useState(false);
+    const {
+        data: claimData,
+        setData: setClaimData,
+        post: postClaim,
+        processing: processingClaim,
+        reset: resetClaimForm,
+    } = useForm({
+        deceased_person_id: '',
+        deceased_person_type: 'Member',
+        date_of_death: '',
+    });
+
+    const submitClaim = (e) => {
+        e.preventDefault();
+        postClaim('/claim', {
+            onSuccess: () => {
+                resetClaimForm();
+                setClaimModalOpen(false);
+            },
+        });
+    };
+
     // Inertia form helper for adding a new dependent
     const {data, setData, post, processing, errors, reset} = useForm({
         name: '',
@@ -100,7 +125,7 @@ export default function UserDashboard() {
                                 </Button>
                             </Flex>
                             <Tooltip content="Start a new claim application">
-                                <Button variant="solid"><PlusIcon className="mr-1"/> Submit New Claim</Button>
+                                <Button variant="solid" onClick={() => setClaimModalOpen(true)}><PlusIcon className="mr-1"/> Submit New Claim</Button>
                             </Tooltip>
                         </Flex>
 
@@ -431,6 +456,63 @@ export default function UserDashboard() {
                     </Card>
                 </div>
             </div>
+
+            {/* Claim Submission Modal */}
+            <Dialog.Root open={isClaimModalOpen} onOpenChange={setClaimModalOpen}>
+                <Dialog.Content style={{ maxWidth: 450 }}>
+                    <Dialog.Title>Submit a New Claim</Dialog.Title>
+                    <Dialog.Description size="2" mb="4">
+                        Please fill in the details for the claim.
+                    </Dialog.Description>
+
+                    <form onSubmit={submitClaim}>
+                        <Flex direction="column" gap="3">
+                            <label>
+                                <Text as="div" size="2" mb="1" weight="bold">Deceased Person</Text>
+                                <select
+                                    className="w-full p-2 border rounded"
+                                    value={claimData.deceased_person_id}
+                                    onChange={e => {
+                                        const id = e.target.value;
+                                        setClaimData('deceased_person_id', id);
+                                        setClaimData('deceased_person_type',
+                                            id === String(user.id) ? 'Member' : 'Dependent'
+                                        );
+                                    }}
+                                    required
+                                >
+                                    <option value="" disabled>Select a person</option>
+                                    <option value={user.id}>{user.name} (Member)</option>
+                                    {dependents.map(d => (
+                                        <option key={d.id} value={d.id}>{d.name} ({d.relationship})</option>
+                                    ))}
+                                </select>
+                            </label>
+                            <label>
+                                <Text as="div" size="2" mb="1" weight="bold">Date of Death</Text>
+                                <input
+                                    type="date"
+                                    className="w-full p-2 border rounded"
+                                    value={claimData.date_of_death}
+                                    onChange={e => setClaimData('date_of_death', e.target.value)}
+                                    required
+                                />
+                            </label>
+                        </Flex>
+
+                        <Flex gap="3" mt="4" justify="end">
+                            <Dialog.Close>
+                                <Button type="button" variant="soft" color="gray">Cancel</Button>
+                            </Dialog.Close>
+                            <Button type="submit" disabled={processingClaim}>{processingClaim ? 'Submitting...' : 'Submit Claim'}</Button>
+                        </Flex>
+                    </form>
+
+                    <Dialog.Close asChild>
+                        <button className="IconButton" aria-label="Close"><Cross2Icon /></button>
+                    </Dialog.Close>
+                </Dialog.Content>
+            </Dialog.Root>
 
             {/* Payment Simulation Modal */}
             <Dialog.Root open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>

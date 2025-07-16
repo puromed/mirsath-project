@@ -9,6 +9,7 @@ use App\Models\Member;
 use App\Http\Controllers\DependentController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ClaimController;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -41,6 +42,9 @@ Route::middleware('auth')->group(function () {
 
     // Payment Routes
     Route::post('payment', [PaymentController::class, 'store'])->name('payment.store');
+
+    // Claim Routes
+    Route::post('claim', [ClaimController::class, 'store'])->name('claims.store');
 });
 
 /*
