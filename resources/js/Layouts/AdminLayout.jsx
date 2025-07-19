@@ -13,12 +13,11 @@ import AppLayout from './AppLayout';
 export default function AdminLayout({ children }) {
     // Define navigation links for admin
     const navLinks = [
-        { label: 'Dashboard', icon: <DashboardIcon width="20" height="20"/> },
-        { label: 'Members', icon: <PersonIcon width="20" height="20"/> },
-        { label: 'Dependents', icon: <IdCardIcon width="20" height="20"/> },
-        { label: 'Claims', icon: <FileTextIcon width="20" height="20"/> },
-        { label: 'Reports', icon: <BarChartIcon width="20" height="20"/> },
-        { label: 'Settings', icon: <GearIcon width="20" height="20"/> },
+        { label: 'Dashboard', href: '/admin/dashboard', icon: <DashboardIcon width="20" height="20"/> },
+        { label: 'Members', href: '/admin/members', icon: <PersonIcon width="20" height="20"/> },
+        { label: 'Dependents', href: '/admin/dependents', icon: <IdCardIcon width="20" height="20"/> },
+        { label: 'Claims', href: '/admin/claims', icon: <FileTextIcon width="20" height="20"/> },
+        { label: 'Reports', href: '/admin/reports', icon: <BarChartIcon width="20" height="20"/> },
     ];
 
     // Define help links for admin

@@ -9,15 +9,17 @@ import {
     InfoCircledIcon
 } from '@radix-ui/react-icons';
 import AppLayout from './AppLayout';
+import { Callout } from '@radix-ui/themes';
+import { usePage } from '@inertiajs/react';
 
 export default function UserLayout({ children, userName = "Member User" }) {
     // Define navigation links for users
     const navLinks = [
-        { label: 'Dashboard', icon: <DashboardIcon width="20" height="20"/> },
-        { label: 'My Profile', icon: <PersonIcon width="20" height="20"/> },
-        { label: 'My Dependents', icon: <IdCardIcon width="20" height="20"/> },
-        { label: 'My Claims', icon: <FileTextIcon width="20" height="20"/> },
-        { label: 'Payment History', icon: <BarChartIcon width="20" height="20"/> },
+        { label: 'Dashboard', href: '/dashboard', icon: <DashboardIcon width="20" height="20"/> },
+        { label: 'My Profile', href: '/profile', icon: <PersonIcon width="20" height="20"/> },
+        { label: 'My Dependents', href: '/dependents', icon: <IdCardIcon width="20" height="20"/> },
+        { label: 'My Claims', href: '/claims', icon: <FileTextIcon width="20" height="20"/> },
+        { label: 'Payment History', href: '/payments', icon: <BarChartIcon width="20" height="20"/> },
     ];
 
     // Define help links for users
@@ -25,6 +27,8 @@ export default function UserLayout({ children, userName = "Member User" }) {
         { label: 'Help & FAQ', icon: <QuestionMarkCircledIcon width="18" height="18"/> },
         { label: 'Logout', icon: <ExitIcon width="18" height="18"/> },
     ];
+
+    const { flash = {} } = usePage().props;
 
     return (
         <AppLayout
@@ -36,6 +40,20 @@ export default function UserLayout({ children, userName = "Member User" }) {
             pageTitle="Dashboard"
             pageSubtitle="Welcome to your personal membership portal."
         >
+            {/* Flash Banners */}
+            {flash.success && (
+                <Callout.Root color={/rejected|not approved|declined/i.test(flash.success) ? 'red' : 'green'} mb="4">
+                    <Callout.Icon />
+                    <Callout.Text>{flash.success}</Callout.Text>
+                </Callout.Root>
+            )}
+            {flash.error && (
+                <Callout.Root color="red" mb="4">
+                    <Callout.Icon />
+                    <Callout.Text>{flash.error}</Callout.Text>
+                </Callout.Root>
+            )}
+
             {children}
         </AppLayout>
     );

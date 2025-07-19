@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\Claim;
+use App\Models\User;
+use App\Models\StaffAccount;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class ClaimPolicy
+{
+    use HandlesAuthorization;
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, Claim $claim): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Claim $claim): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Claim $claim): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     */
+    public function restore(User $user, Claim $claim): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     */
+    public function forceDelete(User $user, Claim $claim): bool
+    {
+        return false;
+    }
+
+    /**
+     * Only staff with is_admin flag may review
+     */
+    public function review(StaffAccount $staffAccount): bool
+    {
+        // Authorize when related staff record exists and role is 'Admin'
+        return optional($staffAccount->staff)->role === 'Admin';
+    }
+}

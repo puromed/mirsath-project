@@ -57,6 +57,8 @@ class UserDashboardController extends Controller
                 'deceasedName' => $this->lookupName($c->deceased_person_id),
                 'submissionDate' => $c->created_at->format('M d, Y'),
                 'status' => $c->status,
+                'deceased_person_id' => $c->deceased_person_id,
+                'deceased_person_type' => $c->deceased_person_type,
             ]) ?? [],
             'payments' => $member->transactions?->map(fn ($p) => [
                 'id'     => $p->id,

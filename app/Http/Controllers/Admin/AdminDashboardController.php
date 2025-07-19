@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Member; // <-- ADDED THIS LINE
+use App\Models\Claim;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Notifications\MemberStatusUpdated;
@@ -21,13 +22,19 @@ class AdminDashboardController extends Controller
         $pendingMembers = Member::where('status', 'Pending')->latest()->get();
         $activeMembers = Member::where('status', 'Active')->count();
         $totalMembers = Member::count();
+        $totalClaims = Claim::count();
+
+        $pendingClaims = Claim::with(['member', 'deceased'])
+            ->where('status', 'Pending Review')
+            ->latest('submission_date')
+            ->get();
 
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
                 'totalMembers' => $totalMembers,
                 'pendingMembers' => $pendingMembers->count(),
                 'activeMembers' => $activeMembers,
-                'totalClaims' => 0, // Placeholder for now
+                'totalClaims' => $totalClaims,
             ],
             'pendingMembers' => $pendingMembers->map(function ($member) {
                 return [
@@ -35,6 +42,14 @@ class AdminDashboardController extends Controller
                     'name' => $member->name,
                     'ic_number' => $member->ic_number,
                     'created_at' => $member->created_at->toIso8601String(),
+                ];
+            }),
+            'pendingClaims' => $pendingClaims->map(function ($claim) {
+                return [
+                    'id' => $claim->id,
+                    'member_name' => $claim->member->name,
+                    'deceased_name' => $claim->deceased->name,
+                    'submission_date' => optional($claim->submission_date)->toFormattedDateString() ?? '—',
                 ];
             }),
         ]);

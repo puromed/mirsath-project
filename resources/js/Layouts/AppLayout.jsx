@@ -11,30 +11,39 @@ import {
 } from '@radix-ui/themes';
 import { HamburgerMenuIcon, CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
 
-const SidebarLink = ({ icon, label, active, collapsed, onClick }) => (
-    <Button
-        variant="ghost"
-        onClick={onClick}
-        className={`w-full font-semibold text-sm rounded-lg transition-all duration-200 ${
-            active 
-            ? 'bg-accent-light-green text-primary-dark' 
-            : 'text-white hover:bg-white/10'
-        } ${
-            collapsed 
-            ? 'justify-center h-12' 
-            : 'justify-start h-12 px-4'
-        }`}
-        title={collapsed ? label : ""}
-    >
-        {icon}
-        {!collapsed && <span className="ml-3">{label}</span>}
-    </Button>
-);
+const SidebarLink = ({ icon, label, href, active, collapsed, onClick }) => {
+    const handleClick = () => {
+        if (href) {
+            router.visit(href, { preserveState: true });
+        }
+        onClick();
+    };
+
+    return (
+        <Button
+            variant="ghost"
+            onClick={handleClick}
+            className={`w-full font-semibold text-sm rounded-lg transition-all duration-200 ${
+                active 
+                ? 'bg-accent-light-green text-primary-dark' 
+                : 'text-white hover:bg-white/10'
+            } ${
+                collapsed 
+                ? 'justify-center h-12' 
+                : 'justify-start h-12 px-4'
+            }`}
+            title={collapsed ? label : ""}
+        >
+            {icon}
+            {!collapsed && <span className="ml-3">{label}</span>}
+        </Button>
+    );
+};
 
 export default function AppLayout({ children, navLinks, helpLinks, title, userName, avatarUrl, pageTitle, pageSubtitle }) {
+    const { url } = usePage();
     const { flash } = usePage().props;
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-    const [activeLink, setActiveLink] = useState(navLinks[0]?.label || '');
     const decision = flash?.decision;
 
     const DecisionModal = () => (
@@ -72,8 +81,8 @@ export default function AppLayout({ children, navLinks, helpLinks, title, userNa
         <div className="min-h-screen bg-page-bg">
             <DecisionModal />
             <Flex>
-                <aside className={`${sidebarCollapsed ? 'w-24' : 'w-72'} bg-sidebar-bg text-white transition-all duration-300 ease-in-out flex-shrink-0`}>
-                    <Flex direction="column" justify="between" className="h-full">
+                <aside className={`${sidebarCollapsed ? 'w-24' : 'w-72'} bg-sidebar-bg text-white transition-all duration-300 ease-in-out flex-shrink-0 min-h-screen`}>
+                    <Flex direction="column" justify="between" className="h-screen min-h-screen">
                         <Box>
                             <Box className={`py-6 px-6 ${sidebarCollapsed ? 'px-4' : ''}`}>
                                 <Text weight="bold" className={`text-accent-gold transition-all duration-300 ${sidebarCollapsed ? 'text-center text-xl' : 'text-3xl'}`}>
@@ -86,9 +95,9 @@ export default function AppLayout({ children, navLinks, helpLinks, title, userNa
                                     <SidebarLink 
                                         key={link.label} 
                                         {...link} 
-                                        active={activeLink === link.label} 
+                                        active={link.href && (url === link.href || url.startsWith(link.href + '/'))} 
                                         collapsed={sidebarCollapsed} 
-                                        onClick={() => setActiveLink(link.label)} 
+                                        onClick={() => {}} 
                                     />
                                 ))}
                             </nav>

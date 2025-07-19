@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Transaction;
 use App\Models\Claim;
+use App\Models\Dependent;
 // import user model
 use App\Models\User;
 

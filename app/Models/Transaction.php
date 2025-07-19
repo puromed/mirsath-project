@@ -25,6 +25,7 @@ class Transaction extends Model
      */
     protected $fillable = [
         'member_id',
+        'claim_id',
         'amount',
         'purpose',
         'transaction_date',

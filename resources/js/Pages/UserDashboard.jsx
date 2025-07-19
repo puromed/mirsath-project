@@ -31,32 +31,15 @@ import UserLayout from '@/Layouts/UserLayout';
 
 
 
-// --- MOCK DATA FOR A SINGLE USER ---
 
-const mockUser = {
-    name: 'Ahmad bin Abdullah',
-    status: 'Active',
-    memberSince: 'Jan 1, 2022',
-    nextPaymentDue: 'Jan 1, 2026',
-};
-
-const dependents = [
-    { id: 1, name: 'Siti binti Kassim', relationship: 'Spouse' },
-    { id: 2, name: 'Omar bin Ahmad', relationship: 'Child' },
-    { id: 3, name: 'Aisyah binti Ahmad', relationship: 'Child' },
-];
-
-const claims = [
-    { id: 'CLM-045', deceasedName: 'Siti binti Kassim', submissionDate: 'Mar 10, 2024', status: 'Approved', payout: 'RM 2700.00' },
-];
-
-const payments = [
-    { id: 'PAY-091', date: 'Jan 5, 2025', purpose: 'Annual Fee', amount: 'RM 60.00', status: 'Paid' },
-];
-
-console.log('Select at runtime:', Select);
 export default function UserDashboard() {
     const { user = {}, dependents = [], claims = [], payments = [], hasPaidAnnual = false } = usePage().props;
+
+    // Build a Set of IDs already used in pending claims
+    const pendingKeys = new Set(
+        claims.filter(c => c.status?.toLowerCase().startsWith('pending'))
+              .map(c => `${c.deceased_person_type}-${c.deceased_person_id}`)
+    );
 
     // Filter payments by purpose for separate display
     const membershipPayments = payments.filter(p => p.purpose === 'MembershipFee');
@@ -71,6 +54,32 @@ export default function UserDashboard() {
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
     const [paymentStep, setPaymentStep] = useState('initial'); // 'initial', 'processing', 'completed'
 
+    // Inertia form for annual membership payment
+    const {
+        data: paymentData,
+        setData: setPaymentData,
+        post: postPayment,
+        processing: processingPayment,
+    } = useForm({
+        amount: 60,
+        purpose: 'MembershipFee',
+    });
+
+    const submitPayment = () => {
+        postPayment('/payment', {
+            preserveScroll: true,
+            onSuccess: () => {
+                setPaymentStep('completed');
+                // refresh page props to reflect new payment
+                router.reload({ only: ['payments', 'hasPaidAnnual'] });
+            },
+            onError: () => {
+                // Reset back to initial state on error
+                setPaymentStep('initial');
+            }
+        });
+    }
+
     // ----- Claim Modal State & Form -----
     const [isClaimModalOpen, setClaimModalOpen] = useState(false);
     const {
@@ -83,11 +92,13 @@ export default function UserDashboard() {
         deceased_person_id: '',
         deceased_person_type: 'Member',
         date_of_death: '',
+        death_certificate: null,
     });
 
     const submitClaim = (e) => {
         e.preventDefault();
         postClaim('/claim', {
+            forceFormData: true,
             onSuccess: () => {
                 resetClaimForm();
                 setClaimModalOpen(false);
@@ -169,7 +180,14 @@ export default function UserDashboard() {
                                                 <Table.Cell>{claim.submissionDate}</Table.Cell>
                                                 <Table.Cell>
                                                     <Tooltip content={`Payout: ${claim.payout}`}>
-                                                        <Badge color="green">{claim.status}</Badge>
+                                                        <Badge color={
+                                                            claim.status?.toLowerCase() === 'approved' ? 'green' :
+                                                            claim.status?.toLowerCase() === 'rejected' ? 'red' :
+                                                            claim.status?.toLowerCase().startsWith('pending') ? 'amber' :
+                                                            'gray'
+                                                        }>
+                                                            {claim.status}
+                                                        </Badge>
                                                     </Tooltip>
                                                 </Table.Cell>
                                             </Table.Row>
@@ -308,6 +326,36 @@ export default function UserDashboard() {
                             </Flex>
                         )}
                     </Card>
+
+                    {/* Payment Modal */}
+                    <Dialog.Root open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
+                        <Dialog.Content style={{ maxWidth: 400 }}>
+                            {paymentStep === 'initial' && (
+                                <>
+                                    <Dialog.Title>Confirm Annual Fee</Dialog.Title>
+                                    <Dialog.Description size="2" mb="4">
+                                        Pay RM60 to renew your membership.
+                                    </Dialog.Description>
+                                    <Flex gap="3" justify="end">
+                                        <Button variant="soft" onClick={() => setIsPaymentModalOpen(false)}>Cancel</Button>
+                                        <Button disabled={processingPayment} onClick={submitPayment}>
+                                            {processingPayment ? 'Processing…' : 'Confirm & Pay'}
+                                        </Button>
+                                    </Flex>
+                                </>
+                            )}
+                            {paymentStep === 'completed' && (
+                                <Flex direction="column" align="center" gap="4" py="6">
+                                    <CheckCircledIcon className="w-8 h-8 text-green-600" />
+                                    <Heading as="h4" size="4">Payment Successful</Heading>
+                                    <Button onClick={() => {
+                                        setIsPaymentModalOpen(false);
+                                        setPaymentStep('initial');
+                                    }}>Close</Button>
+                                </Flex>
+                            )}
+                        </Dialog.Content>
+                    </Dialog.Root>
 
                     {/* My Family Card (Enhanced) */}
                     <Card className="shadow-md" variant="surface">
@@ -482,9 +530,9 @@ export default function UserDashboard() {
                                     required
                                 >
                                     <option value="" disabled>Select a person</option>
-                                    <option value={user.id}>{user.name} (Member)</option>
+                                    <option value={user.id} disabled={pendingKeys.has(`Member-${user.id}`)}>{user.name} (Member){pendingKeys.has(`Member-${user.id}`) ? ' - Pending Claim' : ''}</option>
                                     {dependents.map(d => (
-                                        <option key={d.id} value={d.id}>{d.name} ({d.relationship})</option>
+                                        <option key={d.id} value={d.id} disabled={pendingKeys.has(`Dependent-${d.id}`)}>{d.name} ({d.relationship}){pendingKeys.has(`Dependent-${d.id}`) ? ' - Pending Claim' : ''}</option>
                                     ))}
                                 </select>
                             </label>
@@ -495,6 +543,15 @@ export default function UserDashboard() {
                                     className="w-full p-2 border rounded"
                                     value={claimData.date_of_death}
                                     onChange={e => setClaimData('date_of_death', e.target.value)}
+                                    required
+                                />
+                            </label>
+                            <label>
+                                <Text as="div" size="2" mb="1" weight="bold">Death Certificate</Text>
+                                <input
+                                    type="file"
+                                    className="w-full p-2 border rounded"
+                                    onChange={e => setClaimData('death_certificate', e.target.files[0])}
                                     required
                                 />
                             </label>
@@ -514,55 +571,7 @@ export default function UserDashboard() {
                 </Dialog.Content>
             </Dialog.Root>
 
-            {/* Payment Simulation Modal */}
-            <Dialog.Root open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
-                <Dialog.Content style={{ maxWidth: 450 }}>
-                    <Dialog.Title>Complete Your Payment</Dialog.Title>
-                    <Dialog.Description size="2" mb="4">
-                        Please confirm the annual payment of RM60.
-                    </Dialog.Description>
 
-                    {paymentStep === 'initial' && (
-                        <Flex direction="column" gap="3" align="center">
-                            <Text size="6" weight="bold">RM60.00</Text>
-                            <Text color="gray">Annual Membership Fee</Text>
-                            <Button size="3" mt="3" onClick={() => {
-                                setPaymentStep('processing');
-                                // Simulate a 3-second payment processing time
-                                setTimeout(() => {
-                                    router.post('/payment', {}, {
-                                        onSuccess: () => setPaymentStep('completed'),
-                                        preserveState: true,
-                                        preserveScroll: true,
-                                    });
-                                }, 3000);
-                            }}>
-                                Confirm Payment
-                            </Button>
-                        </Flex>
-                    )}
-
-                    {paymentStep === 'processing' && (
-                        <Flex direction="column" gap="3" align="center" className="py-6">
-                            <ReloadIcon className="animate-spin" width="40" height="40" />
-                            <Text mt="2">Processing your payment...</Text>
-                        </Flex>
-                    )}
-
-                    {paymentStep === 'completed' && (
-                        <Flex direction="column" gap="3" align="center" className="py-6">
-                            <CheckCircledIcon width="40" height="40" className="text-green-500" />
-                            <Text mt="2" weight="bold">Payment Successful!</Text>
-                            <Dialog.Close>
-                                <Button mt="3" variant="soft" onClick={() => setIsPaymentModalOpen(false)}>
-                                    Close
-                                </Button>
-                            </Dialog.Close>
-                        </Flex>
-                    )}
-
-                </Dialog.Content>
-            </Dialog.Root>
         </UserLayout>
     );
 }

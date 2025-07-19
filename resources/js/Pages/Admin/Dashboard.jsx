@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { Grid, Card, Text, Flex, Box, Heading, Table, Button } from '@radix-ui/themes';
 
 
-export default function Dashboard({ auth, pendingMembers, recentMembers, stats }) {
+export default function Dashboard({ auth, pendingMembers, pendingClaims = [], stats }) {
     return (
         <AdminLayout>
             <Head title="Admin Dashboard" />
@@ -62,6 +62,31 @@ export default function Dashboard({ auth, pendingMembers, recentMembers, stats }
                     </Table.Body>
                 </Table.Root>
             </Card>
+
+            {/* Pending Claims Section */}
+            <Box mt="6">
+                <Heading size="4" mb="4">Pending Claim Reviews</Heading>
+                {pendingClaims.length > 0 ? (
+                    <Grid columns={{ initial: '1', sm: '2', md: '3' }} gap="4">
+                        {pendingClaims.map((claim) => (
+                            <Card key={claim.id}>
+                                <Flex direction="column" gap="2">
+                                    <Text size="2" weight="bold">{claim.member_name}</Text>
+                                    <Text size="1" color="gray">Deceased: {claim.deceased_name}</Text>
+                                    <Text size="1" color="gray">Submitted: {claim.submission_date}</Text>
+                                    <Link href={`/admin/claims/${claim.id}`} as="button" className="mt-2 px-3 py-1 text-sm font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">
+                                        Review Claim
+                                    </Link>
+                                </Flex>
+                            </Card>
+                        ))}
+                    </Grid>
+                ) : (
+                    <Card>
+                        <Text>No pending claims to review.</Text>
+                    </Card>
+                )}
+            </Box>
         </AdminLayout>
     );
 }

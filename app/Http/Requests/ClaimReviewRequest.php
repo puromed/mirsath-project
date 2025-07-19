@@ -3,15 +3,16 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Claim;
 
-class ClaimStoreRequest extends FormRequest
+class ClaimReviewRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        return auth('staff')->user()?->can('review', Claim::class) ?? false;
     }
 
     /**
@@ -22,10 +23,9 @@ class ClaimStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'deceased_person_id' => ['required', 'integer'],
-            'deceased_person_type' => ['required','in:Member,Dependent'],
-            'date_of_death' => ['required', 'date', 'before_or_equal:today'],
-            'death_certificate' => [ 'required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'decision_notes' => ['nullable', 'string', 'max:1000'],
+            /* amount required only on approve route */
+            'payout_amount' => [ 'required_if:_route_,admin.claims.approve', 'numeric', 'min:0'],
         ];
     }
 }
