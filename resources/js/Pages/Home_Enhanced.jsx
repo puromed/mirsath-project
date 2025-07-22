@@ -23,45 +23,6 @@ import {
   } from '@radix-ui/react-icons';
 
   export default function Home() {
-    const timelineData = [
-      {
-        n: '1',
-        title: 'Register Online',
-        description: 'Complete our quick sign-up form with your details and pay your first contribution securely online.',
-        badges: [
-          { text: '5 minutes', color: 'emerald' },
-          { text: 'Secure payment', color: 'blue' },
-        ]
-      },
-      {
-        n: '2',
-        title: 'Instant Coverage',
-        description: 'You and your dependents are immediately protected by our mutual fund with full benefits.',
-        badges: [
-          { text: 'Immediate', color: 'green' },
-          { text: 'Full family', color: 'mint' },
-        ]
-      },
-      {
-        n: '3',
-        title: 'Submit Claims',
-        description: 'In the event of a member\'s passing, submit a claim digitally with required documents.',
-        badges: [
-          { text: 'Digital process', color: 'amber' },
-          { text: 'Document upload', color: 'orange' },
-        ]
-      },
-      {
-        n: '4',
-        title: 'Fast Disbursement',
-        description: 'Approved claims are processed and paid within 48 hours to support the family.',
-        badges: [
-          { text: '48 hours', color: 'violet' },
-          { text: 'Direct transfer', color: 'indigo' },
-        ]
-      },
-    ];
-
     return (
       <Box className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100">
         {/* NAVBAR */}
@@ -76,11 +37,11 @@ import {
   
               {/* Links */}
               <Flex gap="4" align="center">
-                <Button variant="ghost" color="emerald" asChild className="hover:bg-emerald-50">
-                  <a href="/about">About</a>
+                <Button variant="ghost" color="emerald" className="hover:bg-emerald-50">
+                  About
                 </Button>
                 <Button variant="ghost" color="emerald" className="hover:bg-emerald-50">
-                  Help
+                  Services
                 </Button>
                 <Button variant="ghost" color="emerald" className="hover:bg-emerald-50">
                   Contact
@@ -226,44 +187,76 @@ import {
             </Box>
 
             <Box className="relative max-w-4xl mx-auto">
-              {/* Central Timeline Line for Desktop */}
+              {/* Central Timeline Line */}
               <Box
                 position="absolute"
                 width="3px"
                 height="100%"
                 top="0"
                 left="50%"
-                className="hidden md:block bg-gradient-to-b from-transparent via-emerald-400 to-transparent rounded-full transform -translate-x-1/2"
-              />
-              {/* Vertical Line for Mobile */}
-              <Box
-                position="absolute"
-                width="3px"
-                height="100%"
-                top="0"
-                left="calc(2rem - 1.5px)" // Aligns with the center of the mobile connector circle
-                className="block md:hidden bg-gradient-to-b from-transparent via-emerald-400 to-transparent rounded-full"
+                className="bg-gradient-to-b from-transparent via-emerald-400 to-transparent rounded-full transform -translate-x-1/2"
               />
               
               <Flex direction="column" gap="12">
-                {timelineData.map((step, index) => (
-                  <EnhancedTimeStep 
-                    key={step.n}
-                    n={step.n} 
-                    title={step.title}
-                    side={index % 2 === 0 ? 'left' : 'right'}
-                    delay={`${index * 200}ms`}
-                  >
-                    <Text size="3" className="text-slate-600 leading-relaxed mb-4">
-                      {step.description}
-                    </Text>
-                    <Flex gap="2" className="flex-wrap">
-                      {step.badges.map(badge => (
-                        <Badge key={badge.text} variant="soft" color={badge.color} size="1">{badge.text}</Badge>
-                      ))}
-                    </Flex>
-                  </EnhancedTimeStep>
-                ))}
+                <EnhancedTimeStep 
+                  n="1" 
+                  title="Register Online"
+                  side="left"
+                  delay="0ms"
+                >
+                  <Text size="3" className="text-slate-600 leading-relaxed mb-4">
+                    Complete our quick sign-up form with your details and pay your first contribution securely online.
+                  </Text>
+                  <Flex gap="2" className="flex-wrap">
+                    <Badge variant="soft" color="emerald" size="1">5 minutes</Badge>
+                    <Badge variant="soft" color="blue" size="1">Secure payment</Badge>
+                  </Flex>
+                </EnhancedTimeStep>
+
+                <EnhancedTimeStep 
+                  n="2" 
+                  title="Instant Coverage"
+                  side="right"
+                  delay="200ms"
+                >
+                  <Text size="3" className="text-slate-600 leading-relaxed mb-4">
+                    You and your dependents are immediately protected by our mutual fund with full benefits.
+                  </Text>
+                  <Flex gap="2" className="flex-wrap">
+                    <Badge variant="soft" color="green" size="1">Immediate</Badge>
+                    <Badge variant="soft" color="mint" size="1">Full family</Badge>
+                  </Flex>
+                </EnhancedTimeStep>
+
+                <EnhancedTimeStep 
+                  n="3" 
+                  title="Submit Claims"
+                  side="left"
+                  delay="400ms"
+                >
+                  <Text size="3" className="text-slate-600 leading-relaxed mb-4">
+                    In the event of a member's passing, submit a claim digitally with required documents.
+                  </Text>
+                  <Flex gap="2" className="flex-wrap">
+                    <Badge variant="soft" color="amber" size="1">Digital process</Badge>
+                    <Badge variant="soft" color="orange" size="1">Document upload</Badge>
+                  </Flex>
+                </EnhancedTimeStep>
+
+                <EnhancedTimeStep 
+                  n="4" 
+                  title="Fast Disbursement"
+                  side="right"
+                  delay="600ms"
+                >
+                  <Text size="3" className="text-slate-600 leading-relaxed mb-4">
+                    Approved claims are processed and paid within 48 hours to support the family.
+                  </Text>
+                  <Flex gap="2" className="flex-wrap">
+                    <Badge variant="soft" color="violet" size="1">48 hours</Badge>
+                    <Badge variant="soft" color="indigo" size="1">Direct transfer</Badge>
+                  </Flex>
+                </EnhancedTimeStep>
               </Flex>
             </Box>
           </Container>
@@ -282,7 +275,7 @@ import {
         </Section> */}
   
         {/* CTA */}
-        <Section size="3" className="mt-24 mb-24 bg-slate-100" py={{initial: '12', md: '20'}}>
+        <Section size="3" className="mt-24 bg-slate-100" py={{initial: '12', md: '20'}}>
           <Container size="4">
             <Grid columns={{ initial: '1', md: '2' }} gap={{initial: '8', md: '12'}} align="center">
               <Box>
@@ -323,12 +316,23 @@ import {
             aria-hidden
           />
           
-          <Container size="4" position="relative" mt="12">
+          <Container size="4" position="relative">
             <Grid columns={{ initial: "1", md: "4" }} gap="8" className="mb-12">
               <Box>
-                <img src="/images/Mirsath Logo.png" alt="Mirsath Logo" className="h-20 w-auto mb-6" />
+                <Flex align="center" gap="3" className="mb-6">
+                  <Box 
+                    className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-xl"
+                  >
+                    <Text size="5" weight="bold" className="text-white">M</Text>
+                  </Box>
+                  <Box>
+                    <Text size="5" weight="bold">MIRSATH</Text>
+                    <Text size="1" className="text-emerald-400">Mutual Aid Society</Text>
+                  </Box>
+                </Flex>
                 <Text size="3" className="text-slate-300 leading-relaxed">
-                  Supporting families through mutual aid since 2020. A Shariah-compliant community initiative governed by mosque principles.
+                  Supporting families through mutual aid since 2020. 
+                  A Shariah-compliant community initiative governed by mosque principles.
                 </Text>
                 
                 <Flex gap="4" className="mt-6">
@@ -341,9 +345,9 @@ import {
                 <Text size="4" weight="bold" className="mb-4 text-emerald-400">Quick Links</Text>
                 <Flex direction="column" gap="3">
                   <Link href="/about" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">About MIRSATH</Link>
-                  <Link href="/register" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Registration</Link>
-                  <Link href="/login" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Login</Link>
-                  <Link href="/admin/login" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Admin</Link>
+                  <Link href="/membership" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Membership Plans</Link>
+                  <Link href="/claims" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Claims Process</Link>
+                  <Link href="/documents" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Required Documents</Link>
                   <Link href="/faqs" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Frequently Asked Questions</Link>
                 </Flex>
               </Box>
@@ -366,7 +370,7 @@ import {
                     <Box className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0" />
                     <Text size="2">
                       Setia Alam Mosque<br />
-                      Jalan Setia Prima T U13/T, Setia Alam, Seksyen, U13 Shah Alam, 40170 Shah Alam, Selangor
+                      Malappuram District, Kerala
                     </Text>
                   </Flex>
                   <Flex align="center" gap="3">
@@ -375,7 +379,7 @@ import {
                   </Flex>
                   <Flex align="center" gap="3">
                     <Box className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0" />
-                    <Text size="2">+60 123456789</Text>
+                    <Text size="2">+91 XXX XXX XXXX</Text>
                   </Flex>
                   
                   <Badge variant="soft" color="emerald" className="mt-2 w-fit">
@@ -402,40 +406,9 @@ import {
       </Box>
     );
   }
-
-  function EnhancedTimeStep({ n, title, children, side, delay }) {
-    const isRightSide = side === 'right';
-
-    return (
-      <Box className={`timeline-step`} style={{ animationDelay: delay }}>
-        <Grid columns={{ initial: "1", md: "2" }} gap={{initial: '6', md: '8'}} className="items-center">
-          {/* Step content card */}
-          <Box className={`${isRightSide ? 'md:order-2' : 'md:order-1'} order-2`}>
-            <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-200/50">
-              <Flex direction="column" gap="2">
-                <Heading as="h3" size="5" className="font-bold text-slate-800">
-                  {title}
-                </Heading>
-                {children}
-              </Flex>
-            </Card>
-          </Box>
-
-          {/* Timeline connector (center on desktop, left on mobile) */}
-          <Box className={`${isRightSide ? 'md:order-1' : 'md:order-2'} order-1 flex md:justify-center justify-start`}>
-            <Box
-              className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center shadow-lg border-4 border-white relative z-10"
-            >
-              <Text size="5" weight="bold" className="text-white">
-                {n}
-              </Text>
-            </Box>
-          </Box>
-        </Grid>
-      </Box>
-    );
-  }
-
+  
+  /* ---------------- helpers ---------------- */
+  
   function FeatureCard({ icon, title, desc, highlight }) {
     return (
       <Card className="p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
@@ -463,7 +436,50 @@ import {
       </Card>
     );
   }
+  
+  function EnhancedTimeStep({ n, title, children, side, delay }) {
+    return (
+      <Box className={`timeline-step-${side}`} style={{ animationDelay: delay }}>
+        <Grid columns={{ initial: "1", md: "2" }} gap="6" className="items-center">
+          {/* Step content - Left side on desktop */}
+          <Box className={`${side === 'right' ? 'order-2 md:order-1' : 'order-2'}`}>
+            <Card className="timeline-card p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-emerald-100/50 backdrop-blur-sm">
+              <Flex direction="column" gap="4">
+                <Flex justify="between" align="center" mb="2">
+                  <Heading as="h3" size="5" className="font-bold text-slate-800">
+                    {title}
+                  </Heading>
+                  <Badge 
+                    className="timeline-number bg-gradient-to-r from-emerald-500 to-green-600 text-white px-3 py-1 rounded-full font-bold shadow-lg"
+                    style={{ animationDelay: `calc(${delay} + 200ms)` }}
+                  >
+                    Step {n}
+                  </Badge>
+                </Flex>
+                {children}
+              </Flex>
+            </Card>
+          </Box>
 
+          {/* Timeline connector - Center */}
+          <Box className={`${side === 'right' ? 'order-1 md:order-2' : 'order-1'} flex justify-center`}>
+            <Box
+              className="timeline-connector w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-xl border-4 border-white relative z-10"
+              style={{ animationDelay: `calc(${delay} + 100ms)` }}
+            >
+              <Text size="5" weight="bold" className="text-white">
+                {n}
+              </Text>
+            </Box>
+          </Box>
+
+          {/* Empty space for alignment */}
+          <Box className={`${side === 'right' ? 'hidden md:block' : 'hidden'}`} />
+        </Grid>
+      </Box>
+    );
+  }
+  
   function Stat({ number, label }) {
     return (
       <Card py="6" px="4" radius="large" className="text-center bg-white/60 backdrop-blur-sm border border-emerald-100/50 hover:bg-white/80 transition-all duration-300">

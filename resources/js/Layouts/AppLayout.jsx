@@ -85,9 +85,11 @@ export default function AppLayout({ children, navLinks, helpLinks, title, userNa
                     <Flex direction="column" justify="between" className="h-screen min-h-screen">
                         <Box>
                             <Box className={`py-6 px-6 ${sidebarCollapsed ? 'px-4' : ''}`}>
-                                <Text weight="bold" className={`text-accent-gold transition-all duration-300 ${sidebarCollapsed ? 'text-center text-xl' : 'text-3xl'}`}>
-                                    {sidebarCollapsed ? 'M.' : 'MIRSATH.'}
-                                </Text>
+                                <img 
+                                    src="/images/Mirsath Logo.png" 
+                                    alt="Mirsath Logo" 
+                                    className={`transition-all duration-300 ${sidebarCollapsed ? 'h-8 mx-auto' : 'h-12' } w-auto`} 
+                                />
                                 {!sidebarCollapsed && title && <Text size="1" className="text-white/60">{title}</Text>}
                             </Box>
                             <nav className={`space-y-2 ${sidebarCollapsed ? 'p-3' : 'p-4'}`}>

@@ -1,0 +1,32 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="iznikPattern" x="0" y="0" width="150" height="150" patternUnits="userSpaceOnUse">
+      <!-- Iznik-style floral motif -->
+      <g fill="currentColor" opacity="0.08">
+        <!-- Central flower -->
+        <circle cx="75" cy="75" r="25" fill="none" stroke="currentColor" stroke-width="2" />
+        <circle cx="75" cy="75" r="15" fill="none" stroke="currentColor" stroke-width="1" />
+        <circle cx="75" cy="75" r="8" />
+        
+        <!-- Petals around center -->
+        <ellipse cx="75" cy="45" rx="8" ry="15" />
+        <ellipse cx="105" cy="75" rx="15" ry="8" />
+        <ellipse cx="75" cy="105" rx="8" ry="15" />
+        <ellipse cx="45" cy="75" rx="15" ry="8" />
+        
+        <!-- Corner decorations -->
+        <circle cx="25" cy="25" r="8" />
+        <circle cx="125" cy="25" r="8" />
+        <circle cx="25" cy="125" r="8" />
+        <circle cx="125" cy="125" r="8" />
+        
+        <!-- Connecting vines -->
+        <path d="M25,25 Q50,50 75,45 Q100,50 125,25" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4" />
+        <path d="M125,25 Q100,50 105,75 Q100,100 125,125" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4" />
+        <path d="M125,125 Q100,100 75,105 Q50,100 25,125" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4" />
+        <path d="M25,125 Q50,100 45,75 Q50,50 25,25" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4" />
+      </g>
+    </pattern>
+  </defs>
+  <rect width="300" height="300" fill="url(#iznikPattern)" />
+</svg>

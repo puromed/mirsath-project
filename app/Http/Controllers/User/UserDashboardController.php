@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use App\Models\Claim;
 
 class UserDashboardController extends Controller
 {
@@ -35,6 +36,19 @@ class UserDashboardController extends Controller
         if ($relations) {
             $member->load($relations);
         }
+
+        // Payout History claims
+        $payouts = Claim::where('member_id', $member->id)
+        ->where('status', 'Approved')
+        ->whereNotNull('payout_amount')
+        ->orderByDesc('decision_date')
+        ->select(['id', 'decision_date', 'payout_amount'])
+        ->get()
+        ->map(fn ($c) => [
+            'id'    => $c->id,
+            'date'  => $c->decision_date ? Carbon::parse($c->decision_date)->format('M d, Y') : null,
+            'amount'=> 'RM '.number_format($c->payout_amount, 2),
+        ]);
 
         // Build props expected by the React page
         $props = [
@@ -66,6 +80,9 @@ class UserDashboardController extends Controller
                 'purpose'=> $p->purpose,
                 'amount' => 'RM '.number_format($p->amount, 2),
             ]) ?? [],
+
+            'payouts' => $payouts,
+            
             // hasPaidAnnual: true if at least one membership fee this calendar year
             'hasPaidAnnual' => $member->transactions()->where('purpose','MembershipFee')
                                  ->whereYear('transaction_date', now()->year)->exists(),
@@ -73,6 +90,8 @@ class UserDashboardController extends Controller
 
         return Inertia::render('UserDashboard', $props);
     }
+
+   
 
     private function lookupName($id): string 
     {

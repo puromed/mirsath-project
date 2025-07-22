@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Member; // <-- ADDED THIS LINE
+use App\Models\Member; 
 use App\Models\Claim;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -59,7 +61,7 @@ class AdminDashboardController extends Controller
      * Update the status of a member.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Member  $member  <-- This now works because of the import
+     * @param  \App\Models\Member  $member  
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateMemberStatus(Request $request, Member $member)
@@ -76,5 +78,28 @@ class AdminDashboardController extends Controller
         $member->notify(new MemberStatusUpdated($member->status));
 
         return redirect()->route('admin.dashboard')->with('success', 'Member status updated successfully.');
+    }
+
+    // Export members to CSV
+    public function exportMembers(): BinaryFileResponse
+    {
+        // Create a temporary file on disk
+        $tempPath = tempnam(sys_get_temp_dir(), 'members_') . '.csv';
+
+        $writer = SimpleExcelWriter::create($tempPath)
+            ->addHeader(['ID', 'Name', 'IC Number', 'Status', 'Created']);
+
+        Member::select('id', 'name', 'ic_number', 'status', 'created_at')
+            ->orderBy('created_at')
+            ->chunk(1000, function ($chunk) use ($writer) {
+                $writer->addRows($chunk->toArray());
+            });
+
+        // Close the writer to flush data
+        unset($writer);
+
+        return response()->download($tempPath, 'members.csv', [
+            'Content-Type' => 'text/csv',
+        ])->deleteFileAfterSend(true);
     }
 }

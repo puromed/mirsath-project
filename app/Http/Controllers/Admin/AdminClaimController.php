@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClaimReviewRequest;
 use App\Models\Claim;
@@ -65,5 +67,28 @@ class AdminClaimController extends Controller
     public function download(Claim $claim)
     {
         return Storage::disk('private')->download($claim->death_certificate_url);
+    }
+
+    // Export claims to CSV
+    public function exportClaims(): BinaryFileResponse
+    {
+        // Create a temporary file on disk
+        $tempPath = tempnam(sys_get_temp_dir(), 'claims_') . '.csv';
+
+        $writer = SimpleExcelWriter::create($tempPath)
+            ->addHeader(['ID', 'Member Name', 'Submission Date', 'Status']);
+
+        Claim::select('id', 'member_id', 'submission_date', 'status')
+            ->orderBy('created_at')
+            ->chunk(1000, function ($chunk) use ($writer) {
+                $writer->addRows($chunk->toArray());
+            });
+
+        // Close the writer to flush data
+        unset($writer);
+
+        return response()->download($tempPath, 'claims.csv', [
+            'Content-Type' => 'text/csv',
+        ])->deleteFileAfterSend(true);
     }
 }

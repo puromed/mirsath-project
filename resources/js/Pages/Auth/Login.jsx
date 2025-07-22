@@ -59,23 +59,23 @@ const Login = () => {
         <div className="min-h-screen bg-gradient-to-b from-primary-dark to-primary-green flex items-center justify-center">
             <Section size="3" className="w-full max-w-md bg-background-off-white/95 backdrop-blur-sm rounded-xl shadow-lg p-8 md:p-12">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-accent-gold mb-2 tracking-wide">MIRSATH.</h1>
-                    <h2 className="text-xl font-semibold text-primary-dark mb-2">Log Masuk Sistem</h2>
+                    <img src="/images/Mirsath Logo.png" alt="Mirsath Logo" className="h-[50px] w-auto mx-auto mb-4" />
+                    <h2 className="text-xl font-semibold text-primary-dark mb-2">Member Login</h2>
                 </div>
                 <Form.Root onSubmit={handleSubmit} className="space-y-8">
                     <FormField 
-                        label="Alamat E-mel" 
+                        label="Email" 
                         id="email" 
                         type="email" 
                         value={data.email} 
                         onChange={e => setData('email', e.target.value)} 
                         error={errors.email} 
                         maxLength={100}
-                        placeholder="nama@contoh.com"
+                        placeholder="name@example.com"
                         required 
                     />
                     <div className="space-y-3">
-                        <Label.Root className="text-sm font-medium text-primary-dark">Kata Laluan</Label.Root>
+                        <Label.Root className="text-sm font-medium text-primary-dark">Password</Label.Root>
                         <div className="relative">
                             <input 
                                 type={showPassword ? 'text' : 'password'} 
@@ -83,7 +83,7 @@ const Login = () => {
                                 value={data.password} 
                                 onChange={e => setData('password', e.target.value)} 
                                 className={`w-full px-6 py-4 rounded-full bg-white/80 border ${errors.password ? 'border-red-400' : 'border-primary-dark/30'} text-text-dark placeholder-text-muted/70 focus:ring-2 focus:ring-primary-dark/20 transition-all duration-200`} 
-                                placeholder="Kata laluan anda" 
+                                placeholder="Enter your password" 
                                 required 
                             />
                             <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-4">
@@ -96,19 +96,24 @@ const Login = () => {
                         {processing ? (
                             <Flex align="center" justify="center" gap="2">
                                 <Spinner size="2" color="gold" />
-                                <span>Memproses...</span>
+                                <span>Processing...</span>
                             </Flex>
                         ) : (
-                            'Log Masuk'
+                            'Login'
                         )}
                     </button>
                     <div className="text-center pt-4">
                         <p className="text-sm">
-                            <span className="text-text-dark">Belum ada akaun? </span>
+                            <span className="text-text-dark">Don't have an account? </span>
                             <Link href="/register" className="text-accent-gold hover:text-accent-gold/80 font-medium transition-colors">
-                                Daftar di sini
+                                Register here
                             </Link>
                         </p>
+                    </div>
+                    <div className="text-center mt-8">
+                        <Link href="/" className="text-sm text-primary-dark hover:text-accent-gold transition-colors">
+                            &larr; Back to Homepage
+                        </Link>
                     </div>
                 </Form.Root>
             </Section>

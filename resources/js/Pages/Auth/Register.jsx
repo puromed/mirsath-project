@@ -12,19 +12,28 @@ const FormField = ({ label, id, type = 'text', placeholder, error, value, onChan
     const handleChange = (e) => {
         const newValue = e.target.value;
         
-        // Check length constraint
-        if (maxLength) {
-            setLengthWarning(newValue.length >= maxLength);
+        // Check length constraint only for fields that need strict validation
+        if (maxLength && (id === 'icNumber' || id.includes('phone'))) {
+            if (id === 'icNumber') {
+                setLengthWarning(newValue.length !== maxLength);
+            } else {
+                setLengthWarning(newValue.length > maxLength);
+            }
+        } else {
+            setLengthWarning(false);
         }
 
-        // Check pattern constraint
-        if (pattern) {
+        // Check pattern constraint only for IC and phone
+        if (pattern && (id === 'icNumber' || id.includes('phone'))) {
             const regex = new RegExp(pattern);
             setPatternWarning(newValue.length > 0 && !regex.test(newValue));
         }
 
+        
+
         onChange(e);
     };
+        const showWarning = (id === 'icNumber' || id.includes('phone')) && (lengthWarning || patternWarning);
 
     return (
         <Form.Field className="space-y-3" name={id}>
@@ -33,7 +42,11 @@ const FormField = ({ label, id, type = 'text', placeholder, error, value, onChan
                     {label}
                 </Label.Root>
                 {maxLength && (
-                    <span className={`text-xs ${lengthWarning ? 'text-red-400' : 'text-text-muted'}`}>
+                    <span className={`text-xs ${
+                        id === 'icNumber'
+                            ? (value.length === maxLength ? 'text-green-600' : 'text-red-400')
+                            : (value.length > maxLength ? 'text-red-400' : 'text-text-muted')
+                    }`}>
                         {value.length}/{maxLength}
                     </span>
                 )}
@@ -43,7 +56,7 @@ const FormField = ({ label, id, type = 'text', placeholder, error, value, onChan
                     id={id}
                     type={type}
                     className={`w-full px-6 py-4 rounded-full bg-white/80 border ${
-                        error || lengthWarning || patternWarning
+                        error || showWarning
                             ? 'border-red-400 ring-2 ring-red-300/50'
                             : 'border-primary-dark/30 focus:border-primary-dark'
                     } text-text-dark placeholder-text-muted/70 focus:ring-2 focus:ring-primary-dark/20 transition-all duration-200`}
@@ -56,7 +69,7 @@ const FormField = ({ label, id, type = 'text', placeholder, error, value, onChan
                 />
                 {value && (
                     <div className="absolute right-4 top-4">
-                        {error || lengthWarning || patternWarning ? (
+                        {error || showWarning ? (
                             <CrossCircledIcon className="h-5 w-5 text-red-400" />
                         ) : (
                             <CheckCircledIcon className="h-5 w-5 text-primary-dark" />
@@ -68,10 +81,10 @@ const FormField = ({ label, id, type = 'text', placeholder, error, value, onChan
             {patternWarning && !error && (
                 <p className="text-sm text-red-400 mt-1">
                     {id === 'icNumber' 
-                        ? 'No. Kad Pengenalan mesti mengandungi 12 nombor'
+                        ? 'IC Number must contain 12 numbers'
                         : id.includes('phone')
-                        ? 'No. Telefon mesti mengandungi 10-11 nombor'
-                        : 'Format tidak sah'}
+                        ? 'Phone number must contain 10-11 numbers'
+                        : 'Invalid format'}
                 </p>
             )}
         </Form.Field>
@@ -126,15 +139,15 @@ const Register = () => {
     e.preventDefault();
     if (consent) {
       post('/register', {
-        onSuccess: () => alert('Pendaftaran Berjaya! Sila tunggu pengesahan dari pihak admin.'),
+        onSuccess: () => alert('Registration successful! Please wait for admin approval.'),
         onError: (errors) => {
           console.error('Registration Errors:', errors);
           setStep(1); 
-          alert('Terdapat ralat pada pendaftaran anda. Sila semak semula maklumat yang dimasukkan. Ralat telah direkodkan di konsol.');
+          alert('An error occurred during registration. Please check the information entered. Error has been logged to console.');
         }
       });
     } else {
-      alert('Anda mesti bersetuju dengan terma dan syarat.');
+      alert('You must agree to the terms and conditions.');
     }
   };
 
@@ -146,7 +159,7 @@ const Register = () => {
       <div className="container mx-auto max-w-4xl px-6 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-accent-gold mb-4 tracking-wide">MIRSATH.</h1>
-          <h2 className="text-2xl font-semibold text-background-off-white mb-2">Pendaftaran Sistem MIRSATH</h2>
+          <h2 className="text-2xl font-semibold text-background-off-white mb-2">Register to MIRSATH System</h2>
         </div>
 
         <Section 
@@ -157,11 +170,11 @@ const Register = () => {
             <Form.Root onSubmit={handleSubmit} className="space-y-8">
               {step === 1 && (
                 <div>
-                  <h3 className="text-xl font-semibold text-primary-dark mb-6">Langkah 1: Maklumat Peribadi & Alamat</h3>
+                  <h3 className="text-xl font-semibold text-primary-dark mb-6">Step 1: Personal & Address Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-6">
                       <FormField 
-                        label="Nama Penuh" 
+                        label="Full Name" 
                         id="name" 
                         value={data.name} 
                         onChange={e => setData('name', e.target.value)} 
@@ -171,7 +184,7 @@ const Register = () => {
                         required 
                       />
                       <FormField 
-                        label="No Kad Pengenalan" 
+                        label="IC Number" 
                         id="icNumber" 
                         value={data.icNumber} 
                         onChange={e => setData('icNumber', e.target.value)} 
@@ -182,7 +195,7 @@ const Register = () => {
                         required 
                       />
                       <FormField 
-                        label="Nombor Telefon" 
+                        label="Phone Number" 
                         id="phone_number" 
                         value={data.phone_number} 
                         onChange={e => setData('phone_number', e.target.value)} 
@@ -196,7 +209,7 @@ const Register = () => {
                     </div>
                     <div className="space-y-6">
                       <FormField 
-                        label="No. Rumah" 
+                        label="House No." 
                         id="house_no" 
                         value={data.house_no} 
                         onChange={e => setData('house_no', e.target.value)} 
@@ -206,7 +219,7 @@ const Register = () => {
                         required 
                       />
                       <FormField 
-                        label="Jalan" 
+                        label="Street Address" 
                         id="street_address" 
                         value={data.street_address} 
                         onChange={e => setData('street_address', e.target.value)} 
@@ -216,7 +229,7 @@ const Register = () => {
                         required 
                       />
                       <FormField 
-                        label="Poskod" 
+                        label="Postcode" 
                         id="postcode" 
                         value={data.postcode} 
                         onChange={e => setData('postcode', e.target.value)} 
@@ -226,8 +239,8 @@ const Register = () => {
                         placeholder="40170"
                         required 
                       />
-                      <FormField label="Bandar" id="city" value={data.city} readOnly />
-                      <FormField label="Negeri" id="state" value={data.state} readOnly />
+                      <FormField label="City" id="city" value={data.city} readOnly />
+                      <FormField label="State" id="state" value={data.state} readOnly />
                     </div>
                   </div>
                   <div className="pt-6 text-right">
@@ -238,10 +251,10 @@ const Register = () => {
 
               {step === 2 && (
                 <div>
-                  <h3 className="text-xl font-semibold text-primary-dark mb-6">Langkah 2: Maklumat Waris</h3>
+                  <h3 className="text-xl font-semibold text-primary-dark mb-6">Step 2: Next of Kin Information</h3>
                   <div className="space-y-6">
                     <FormField 
-                      label="Nama Waris" 
+                      label="Next of Kin Name" 
                       id="next_of_kin_name" 
                       value={data.next_of_kin_name} 
                       onChange={e => setData('next_of_kin_name', e.target.value)} 
@@ -252,7 +265,7 @@ const Register = () => {
                       required 
                     />
                     <FormField 
-                      label="Telefon Waris" 
+                      label="Next of Kin Phone" 
                       id="next_of_kin_phone" 
                       value={data.next_of_kin_phone} 
                       onChange={e => setData('next_of_kin_phone', e.target.value)} 
@@ -284,10 +297,10 @@ const Register = () => {
 
               {step === 3 && (
                 <div>
-                  <h3 className="text-xl font-semibold text-primary-dark mb-6">Langkah 3: Maklumat Akaun</h3>
+                  <h3 className="text-xl font-semibold text-primary-dark mb-6">Step 3: Account Information</h3>
                   <div className="space-y-6">
                     <FormField 
-                      label="Alamat E-mel" 
+                      label="Email Address" 
                       id="email" 
                       type="email" 
                       value={data.email} 
@@ -298,7 +311,7 @@ const Register = () => {
                       required 
                     />
                     <div className="space-y-3">
-                      <Label.Root className="text-sm font-medium text-primary-dark">Kata Laluan</Label.Root>
+                      <Label.Root className="text-sm font-medium text-primary-dark">Password</Label.Root>
                       <div className="relative">
                         <input type={showPassword ? 'text' : 'password'} id="password" value={data.password} onChange={e => { setData('password', e.target.value); updatePasswordStrength(e.target.value); }} className={`w-full px-6 py-4 rounded-full bg-white/80 border ${errors.password ? 'border-red-400' : 'border-primary-dark/30'}`} required />
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-4">{showPassword ? <EyeClosedIcon /> : <EyeOpenIcon />}</button>
@@ -319,7 +332,7 @@ const Register = () => {
                       {errors.password && <p className="text-sm text-red-400 mt-1">{errors.password}</p>}
                     </div>
                     <div className="space-y-3">
-                      <Label.Root className="text-sm font-medium text-primary-dark">Pengesahan Kata Laluan</Label.Root>
+                      <Label.Root className="text-sm font-medium text-primary-dark">Password Confirmation</Label.Root>
                       <div className="relative">
                         <input 
                           type={showPasswordConfirmation ? 'text' : 'password'} 
@@ -354,10 +367,10 @@ const Register = () => {
 
               {step === 4 && (
                 <div>
-                  <h3 className="text-xl font-semibold text-primary-dark mb-6">Langkah 4: Pengesahan & Persetujuan</h3>
+                  <h3 className="text-xl font-semibold text-primary-dark mb-6">Step 4: Confirmation & Agreement</h3>
                   <div className="p-6 bg-white/80 rounded-lg space-y-2 text-text-dark">
-                    <h4 className="font-bold text-lg">Sila sahkan maklumat anda:</h4>
-                    <p><strong>Nama:</strong> {data.name}</p>
+                    <h4 className="font-bold text-lg">Please confirm your information:</h4>
+                    <p><strong>Name:</strong> {data.name}</p>
                     <p><strong>IC:</strong> {data.icNumber}</p>
                     <p><strong>Email:</strong> {data.email}</p>
                     <p><strong>Alamat:</strong> {`${data.house_no}, ${data.street_address}, ${data.postcode} ${data.city}, ${data.state}`}</p>
@@ -366,13 +379,13 @@ const Register = () => {
                   <div className="mt-6">
                     <label className="flex items-center">
                       <input type="checkbox" checked={consent} onChange={() => setConsent(!consent)} className="h-5 w-5 text-primary-dark focus:ring-primary-dark" />
-                      <span className="ml-3 text-sm text-text-dark">Saya dengan ini mengesahkan bahawa maklumat di atas adalah benar dan bersetuju dengan <a href="#" className="text-accent-gold underline">terma dan syarat</a> pendaftaran.</span>
+                      <span className="ml-3 text-sm text-text-dark">I confirm that the information above is true and I agree to the <a href="#" className="text-accent-gold underline">terms and conditions</a> of registration.</span>
                     </label>
                   </div>
                   <div className="pt-6 flex justify-between">
-                    <button type="button" onClick={prevStep} className="px-8 py-3 bg-neutral-gray text-white font-bold rounded-full">Kembali</button>
+                    <button type="button" onClick={prevStep} className="px-8 py-3 bg-neutral-gray text-white font-bold rounded-full">Back</button>
                     <button type="submit" disabled={!consent || processing} className={`px-8 py-3 font-bold rounded-full text-white ${!consent || processing ? 'bg-text-muted cursor-not-allowed' : 'bg-primary-dark hover:bg-primary-green'}`}>
-                      {processing ? 'Memproses...' : 'Hantar Pendaftaran'}
+                      {processing ? 'Processing...' : 'Submit'}
                     </button>
                   </div>
                 </div>
@@ -380,9 +393,9 @@ const Register = () => {
 
               <div className="text-center pt-4">
                 <p className="text-sm">
-                  <span className="text-text-dark">Sudah mempunyai akaun? </span>
+                  <span className="text-text-dark">Already have an account? </span>
                   <Link href="/login" className="text-accent-gold hover:text-accent-gold/80 font-medium transition-colors">
-                    Log masuk disini
+                    Login here
                   </Link>
                 </p>
               </div>

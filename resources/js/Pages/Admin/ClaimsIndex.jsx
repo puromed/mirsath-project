@@ -119,6 +119,13 @@ export default function ClaimsIndex({ claims }) {
           </Table.Root>
         </ScrollArea>
 
+        <a
+            href="/admin/claims/export"
+            className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded-md mt-4"
+            target="_blank" rel="noopener"
+          >
+            Download CSV
+          </a>
         {renderPagination()}
       </div>
     </AdminLayout>

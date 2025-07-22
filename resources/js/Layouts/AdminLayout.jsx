@@ -17,7 +17,6 @@ export default function AdminLayout({ children }) {
         { label: 'Members', href: '/admin/members', icon: <PersonIcon width="20" height="20"/> },
         { label: 'Dependents', href: '/admin/dependents', icon: <IdCardIcon width="20" height="20"/> },
         { label: 'Claims', href: '/admin/claims', icon: <FileTextIcon width="20" height="20"/> },
-        { label: 'Reports', href: '/admin/reports', icon: <BarChartIcon width="20" height="20"/> },
     ];
 
     // Define help links for admin
@@ -32,7 +31,7 @@ export default function AdminLayout({ children }) {
             helpLinks={helpLinks}
             title="ADMIN DASHBOARD"
             userName="Admin User"
-            avatarUrl="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=32&h=32&fit=crop&crop=face"
+
             pageTitle="Admin Dashboard"
             pageSubtitle="Manage your organization's membership system"
         >

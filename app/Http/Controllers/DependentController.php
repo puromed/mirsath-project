@@ -2,15 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Models\Dependent;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+
+
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class DependentController extends Controller
 {
     use AuthorizesRequests;
+
+    /**
+     * Display a listing of the user's dependents.
+     */
+    public function index()
+    {
+        $dependents = Auth::user()
+            ->member
+            ->dependents()
+            ->latest()
+            ->get([
+                'id',
+                'name',
+                'ic_number',
+                'relationship',
+                'date_of_birth',
+                'created_at',
+            ]);
+
+        return Inertia::render('User/DependentsList', [
+            'dependents' => $dependents,
+        ]);
+    }
 
     public function store(Request $request)
     {
@@ -63,5 +93,28 @@ class DependentController extends Controller
         $dependent->delete();
 
         return back()->with('success', 'Dependent deleted successfully');
+    }
+
+    // Export dependents to CSV
+    public function exportDependents(): BinaryFileResponse
+    {
+        // Create a temporary file on disk
+        $tempPath = tempnam(sys_get_temp_dir(), 'dependents_') . '.csv';
+
+        $writer = SimpleExcelWriter::create($tempPath)
+            ->addHeader(['ID', 'Name', 'IC Number', 'Relationship', 'Date of Birth', 'Created']);
+
+        Dependent::select('id', 'name', 'ic_number', 'relationship', 'date_of_birth', 'created_at')
+            ->orderBy('created_at')
+            ->chunk(1000, function ($chunk) use ($writer) {
+                $writer->addRows($chunk->toArray());
+            });
+
+        // Close the writer to flush data
+        unset($writer);
+
+        return response()->download($tempPath, 'dependents.csv', [
+            'Content-Type' => 'text/csv',
+        ])->deleteFileAfterSend(true);
     }
 }

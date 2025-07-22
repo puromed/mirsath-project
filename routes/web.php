@@ -23,6 +23,11 @@ Route::get('/', function () {
     return inertia('Home');
 })->name('home');
 
+// About Route
+Route::get('/about', function () {
+    return inertia('About');
+})->name('about');
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
@@ -38,7 +43,7 @@ Route::middleware('auth')->group(function () {
 
     // Placeholder pages for sidebar
     Route::get('profile', fn() => Inertia::render('User/Profile'))->name('profile');
-    Route::get('dependents', fn() => Inertia::render('User/DependentsList'))->name('user.dependents');
+    Route::get('dependents', [\App\Http\Controllers\DependentController::class, 'index'])->name('user.dependents');
     Route::get('claims', fn() => Inertia::render('User/ClaimsIndex'))->name('user.claims');
     Route::get('payments', [PaymentController::class, 'index'])->name('user.payments');
 
@@ -53,6 +58,7 @@ Route::middleware('auth')->group(function () {
 
     // Claim Routes
     Route::post('claim', [ClaimController::class, 'store'])->name('claims.store');
+    
 });
 
 /*
@@ -82,20 +88,31 @@ Route::middleware('auth:staff')->group(function () {
         ]);
     })->name('admin.members.index');
     Route::get('admin/dependents', function () {
-        $dependents = \App\Models\Dependent::with('member:id,name')->latest()->get(['id','name','relationship','member_id','created_at']);
+        $dependents = \App\Models\Dependent::with('member.user')->latest()->get();
         return Inertia::render('Admin/DependentsIndex', [
             'dependents' => $dependents,
         ]);
     })->name('admin.dependents.index');
-    Route::get('admin/reports', function () { return Inertia::render('Admin/ReportsIndex'); })->name('admin.reports.index');
 
     // Route to review claim
-    Route::middleware(['can:review,App\\Models\\Claim'])
+    Route::middleware(['can:review,App\Models\Claim'])
     ->group(function () {
         Route::get   ('admin/claims',                     [AdminClaimController::class,'index' ])->name('admin.claims.index');
-        Route::get   ('admin/claims/{claim}',             [AdminClaimController::class,'show'  ])->name('admin.claims.show');
+        Route::get   ('admin/claims/{claim}',             [AdminClaimController::class,'show'  ])->whereNumber('claim')->name('admin.claims.show');
         Route::patch ('admin/claims/{claim}/approve',     [AdminClaimController::class,'approve'])->name('admin.claims.approve');
         Route::patch ('admin/claims/{claim}/reject',      [AdminClaimController::class,'reject' ])->name('admin.claims.reject');
         Route::get   ('admin/claims/{claim}/certificate', [AdminClaimController::class,'download'])->name('admin.claims.certificate');
     });
+
+    // Route to export csv members
+    Route::get('admin/members/export', [AdminDashboardController::class, 'exportMembers'])
+    ->name('admin.members.export');
+
+    // Route to export csv dependents
+    Route::get('admin/dependents/export', [DependentController::class, 'exportDependents'])
+    ->name('admin.dependents.export');
+
+    // Route to export csv claims
+    Route::get('admin/claims/export', [AdminClaimController::class, 'exportClaims'])
+    ->name('admin.claims.export');
 });

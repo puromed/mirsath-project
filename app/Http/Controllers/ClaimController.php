@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ClaimStoreRequest;
 use App\Models\Claim;
 use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
 
 class ClaimController extends Controller
 {
@@ -33,4 +34,6 @@ class ClaimController extends Controller
 
         return back()->with('success', 'Claim & document submitted successfully.');
     }
+
+    
 }

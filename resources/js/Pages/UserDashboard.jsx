@@ -33,7 +33,7 @@ import UserLayout from '@/Layouts/UserLayout';
 
 
 export default function UserDashboard() {
-    const { user = {}, dependents = [], claims = [], payments = [], hasPaidAnnual = false } = usePage().props;
+    const { user = {}, dependents = [], claims = [], payments = [], payouts = [], hasPaidAnnual = false } = usePage().props;
 
     // Build a Set of IDs already used in pending claims
     const pendingKeys = new Set(
@@ -43,7 +43,6 @@ export default function UserDashboard() {
 
     // Filter payments by purpose for separate display
     const membershipPayments = payments.filter(p => p.purpose === 'MembershipFee');
-    const claimPayouts = payments.filter(p => p.purpose === 'ClaimPayout');
 
     const [isLoading, setIsLoading] = useState(false);
     const [claimsLoading, setClaimsLoading] = useState(false);
@@ -242,17 +241,18 @@ export default function UserDashboard() {
                                     <Table.ColumnHeaderCell>Transaction ID</Table.ColumnHeaderCell>
                                     <Table.ColumnHeaderCell>Date</Table.ColumnHeaderCell>
                                     <Table.ColumnHeaderCell>Amount</Table.ColumnHeaderCell>
+                                    
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                {claimPayouts.length === 0 ? (
+                                {payouts.length === 0 ? (
                                     <Table.Row>
                                         <Table.Cell colSpan="3" className="text-center py-4">
                                             <Text color="gray">No claim payouts recorded</Text>
                                         </Table.Cell>
                                     </Table.Row>
                                 ) : (
-                                    claimPayouts.map(payment => (
+                                    payouts.map(payment => (
                                         <Table.Row key={payment.id}>
                                             <Table.RowHeaderCell>{payment.id}</Table.RowHeaderCell>
                                             <Table.Cell>{payment.date}</Table.Cell>

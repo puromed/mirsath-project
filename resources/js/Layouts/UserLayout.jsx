@@ -13,13 +13,10 @@ import { Callout } from '@radix-ui/themes';
 import { usePage } from '@inertiajs/react';
 
 export default function UserLayout({ children, userName = "Member User" }) {
-    // Define navigation links for users
+    // Define navigation links for users (simplified to only show dependents)
     const navLinks = [
         { label: 'Dashboard', href: '/dashboard', icon: <DashboardIcon width="20" height="20"/> },
-        { label: 'My Profile', href: '/profile', icon: <PersonIcon width="20" height="20"/> },
         { label: 'My Dependents', href: '/dependents', icon: <IdCardIcon width="20" height="20"/> },
-        { label: 'My Claims', href: '/claims', icon: <FileTextIcon width="20" height="20"/> },
-        { label: 'Payment History', href: '/payments', icon: <BarChartIcon width="20" height="20"/> },
     ];
 
     // Define help links for users
@@ -36,7 +33,7 @@ export default function UserLayout({ children, userName = "Member User" }) {
             helpLinks={helpLinks}
             title="MEMBER PORTAL"
             userName={userName}
-            avatarUrl="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+
             pageTitle="Dashboard"
             pageSubtitle="Welcome to your personal membership portal."
         >
