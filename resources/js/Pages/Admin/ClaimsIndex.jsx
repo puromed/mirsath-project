@@ -7,25 +7,14 @@ import {
   Flex,
   Badge,
 } from '@radix-ui/themes';
-import { ArrowRightIcon } from '@radix-ui/react-icons';
+import { ArrowRightIcon, DownloadIcon, FileTextIcon } from '@radix-ui/react-icons';
 import AdminLayout from '@/Layouts/AdminLayout';
 
 // Time if null 
 const displayDate = iso =>
     iso ? new Date(iso). toLocaleString() : '-';
 
-/*
- * Admin Claims Index Page
- * Lists paginated claims for review. Uses Radix-UI Table & Button
- * Props shape (Laravel length-aware paginator):
- * {
- *   claims: {
- *     data: [ { id, status, deceased_person_name, submission_date, decision_date } ],
- *     links: [ { url, label, active } ],
- *     total, per_page, current_page, last_page
- *   }
- * }
- */
+
 export default function ClaimsIndex({ claims }) {
   const { flash } = usePage().props;
 
@@ -119,13 +108,29 @@ export default function ClaimsIndex({ claims }) {
           </Table.Root>
         </ScrollArea>
 
-        <a
+        {/* Export Buttons */}
+        <Flex gap="3" className="mt-4">
+          <a
             href="/admin/claims/export"
-            className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded-md mt-4"
-            target="_blank" rel="noopener"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md transition-colors"
+            target="_blank" 
+            rel="noopener"
           >
+            <DownloadIcon className="w-4 h-4" />
             Download CSV
           </a>
+          
+          <a
+            href="/admin/claims/export-pdf"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+            target="_blank" 
+            rel="noopener"
+          >
+            <FileTextIcon className="w-4 h-4" />
+            Download PDF
+          </a>
+        </Flex>
+
         {renderPagination()}
       </div>
     </AdminLayout>

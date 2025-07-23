@@ -11,6 +11,7 @@ use App\Http\Controllers\DependentController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\PaymentController;
 use App\Http\Controllers\ClaimController;
+use App\Http\Controllers\FaqController;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -27,6 +28,9 @@ Route::get('/', function () {
 Route::get('/about', function () {
     return inertia('About');
 })->name('about');
+
+// FAQ Route (accessible to all)
+Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
@@ -115,4 +119,8 @@ Route::middleware('auth:staff')->group(function () {
     // Route to export csv claims
     Route::get('admin/claims/export', [AdminClaimController::class, 'exportClaims'])
     ->name('admin.claims.export');
+    
+    // Route to export PDF claims
+    Route::get('admin/claims/export-pdf', [AdminClaimController::class, 'exportClaimsPdf'])
+    ->name('admin.claims.export.pdf');
 });

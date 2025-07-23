@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, Link } from '@inertiajs/react';
 import * as Form from '@radix-ui/react-form';
 import * as Label from '@radix-ui/react-label';
 import { Section, Flex, Text, Spinner } from '@radix-ui/themes';
@@ -101,6 +101,12 @@ const AdminLogin = () => {
                             'Log Masuk'
                         )}
                     </button>
+                    <div className="text-center mt-8">
+                                            <Link href="/" className="text-sm text-primary-dark hover:text-accent-gold transition-colors">
+                                                &larr; Back to Homepage
+                                            </Link>
+                                        </div>
+                    
                 </Form.Root>
             </Section>
         </div>

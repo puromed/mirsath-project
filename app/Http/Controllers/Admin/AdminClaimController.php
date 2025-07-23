@@ -10,6 +10,7 @@ use App\Models\Claim;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class AdminClaimController extends Controller
 {
@@ -90,5 +91,35 @@ class AdminClaimController extends Controller
         return response()->download($tempPath, 'claims.csv', [
             'Content-Type' => 'text/csv',
         ])->deleteFileAfterSend(true);
+    }
+
+    // Export claims to PDF
+    public function exportClaimsPdf()
+    {
+        // Get all claims with related data
+        $claims = Claim::with(['member.user', 'deceased'])
+                       ->orderBy('created_at', 'desc')
+                       ->get();
+
+        // Calculate statistics
+        $stats = [
+            'pending' => $claims->where('status', 'Pending')->count(),
+            'approved' => $claims->where('status', 'Approved')->count(),
+            'rejected' => $claims->where('status', 'Rejected')->count(),
+        ];
+
+        // Generate filename with current date
+        $filename = 'claims-report-' . now()->format('Y-m-d') . '.pdf';
+
+        // Generate PDF using Spatie Laravel PDF
+        return Pdf::view('pdf.claims-table', [
+                'claims' => $claims,
+                'stats' => $stats,
+            ])
+            ->format('a4')
+            ->orientation('landscape') // Better for table data
+            ->margins(15, 15, 15, 15) // top, right, bottom, left in mm
+            ->name($filename)
+            ->download();
     }
 }

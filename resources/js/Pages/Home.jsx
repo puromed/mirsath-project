@@ -79,8 +79,8 @@ import {
                 <Button variant="ghost" color="emerald" asChild className="hover:bg-emerald-50">
                   <a href="/about">About</a>
                 </Button>
-                <Button variant="ghost" color="emerald" className="hover:bg-emerald-50">
-                  Help
+                <Button variant="ghost" color="emerald" asChild className="hover:bg-emerald-50">
+                  <a href="/faq">Help</a>
                 </Button>
                 <Button variant="ghost" color="emerald" className="hover:bg-emerald-50">
                   Contact
