@@ -11,6 +11,7 @@ use App\Models\Claim;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Notifications\MemberStatusUpdated;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class AdminDashboardController extends Controller
 {
@@ -101,5 +102,35 @@ class AdminDashboardController extends Controller
         return response()->download($tempPath, 'members.csv', [
             'Content-Type' => 'text/csv',
         ])->deleteFileAfterSend(true);
+    }
+
+    // Export members to PDF
+    public function exportMembersPdf()
+    {
+        // Get all members with statistics
+        $members = Member::with('user')
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+        // Calculate statistics
+        $stats = [
+            'pending' => $members->where('status', 'Pending')->count(),
+            'active' => $members->where('status', 'Active')->count(),
+            'rejected' => $members->where('status', 'Rejected')->count(),
+        ];
+
+        // Generate filename with current date
+        $filename = 'members-report-' . now()->format('Y-m-d') . '.pdf';
+
+        // Generate PDF using Spatie Laravel PDF
+        return Pdf::view('pdf.members-table', [
+                'members' => $members,
+                'stats' => $stats,
+            ])
+            ->format('a4')
+            ->orientation('landscape') // Better for table data
+            ->margins(15, 15, 15, 15) // top, right, bottom, left in mm
+            ->name($filename)
+            ->download();
     }
 }

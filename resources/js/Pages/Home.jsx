@@ -72,25 +72,27 @@ import {
           <Container size="4" py="4">
             <Flex justify="between" align="center">
               {/* Logo */}
-              <img src="/images/Mirsath Logo.png" alt="Mirsath Logo" className="h-20 w-auto" />
+              <Link href="/">
+                <img src="/images/Mirsath Logo.png" alt="Mirsath Logo" className="h-20 w-auto" />
+              </Link>
   
               {/* Links */}
               <Flex gap="4" align="center">
-                <Button variant="ghost" color="emerald" asChild className="hover:bg-emerald-50">
-                  <a href="/about">About</a>
+                <Button variant="solid" color="emerald" className="bg-gradient-to-r from-emerald-600 to-emerald-700">
+                  Home
                 </Button>
                 <Button variant="ghost" color="emerald" asChild className="hover:bg-emerald-50">
-                  <a href="/faq">Help</a>
+                  <Link href="/about">About</Link>
                 </Button>
-                <Button variant="ghost" color="emerald" className="hover:bg-emerald-50">
-                  Contact
+                <Button variant="ghost" color="emerald" asChild className="hover:bg-emerald-50">
+                  <Link href="/faq">FAQ</Link>
                 </Button>
                 <Separator orientation="vertical" size="2" />
                 <Button variant="outline" color="emerald" asChild className="border-emerald-300 hover:bg-emerald-50">
-                  <a href="/login">Log In</a>
+                  <Link href="/login">Log In</Link>
                 </Button>
                 <Button variant="solid" color="emerald" asChild className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 shadow-md">
-                  <a href="/register">Join Now</a>
+                  <Link href="/register">Join Now</Link>
                 </Button>
               </Flex>
             </Flex>
@@ -310,91 +312,24 @@ import {
         </Section>
   
         {/* FOOTER */}
-        <Box as="footer" className="bg-slate-900 text-white relative overflow-hidden" py="16">
-          {/* Background pattern */}
-          <Box
-            position="absolute"
-            inset="0"
-            style={{
-              backgroundImage: 'url(/pattern-islamic.svg)',
-              opacity: 0.05,
-              backgroundSize: 200,
-            }}
-            aria-hidden
-          />
-          
-          <Container size="4" position="relative" mt="12">
-            <Grid columns={{ initial: "1", md: "4" }} gap="8" className="mb-12">
-              <Box>
-                <img src="/images/Mirsath Logo.png" alt="Mirsath Logo" className="h-20 w-auto mb-6" />
-                <Text size="3" className="text-slate-300 leading-relaxed">
-                  Supporting families through mutual aid since 2020. A Shariah-compliant community initiative governed by mosque principles.
-                </Text>
-                
-                <Flex gap="4" className="mt-6">
-                  <Badge variant="soft" color="emerald" size="2">Shariah Compliant</Badge>
-                  <Badge variant="soft" color="mint" size="2">Community Driven</Badge>
-                </Flex>
-              </Box>
-              
-              <Box>
-                <Text size="4" weight="bold" className="mb-4 text-emerald-400">Quick Links</Text>
-                <Flex direction="column" gap="3">
-                  <Link href="/about" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">About MIRSATH</Link>
-                  <Link href="/register" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Registration</Link>
-                  <Link href="/login" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Login</Link>
-                  <Link href="/admin/login" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Admin</Link>
-                  <Link href="/faqs" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Frequently Asked Questions</Link>
-                </Flex>
-              </Box>
-              
-              <Box>
-                <Text size="4" weight="bold" className="mb-4 text-emerald-400">Support</Text>
-                <Flex direction="column" gap="3">
-                  <Link href="/contact" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Contact Us</Link>
-                  <Link href="/policies" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Terms & Conditions</Link>
-                  <Link href="/privacy" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Privacy Policy</Link>
-                  <Link href="/complaint" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">File a Complaint</Link>
-                  <Link href="/feedback" className="text-slate-300 hover:text-emerald-400 transition-colors text-sm">Feedback</Link>
-                </Flex>
-              </Box>
-              
-              <Box>
-                <Text size="4" weight="bold" className="mb-4 text-emerald-400">Contact Info</Text>
-                <Flex direction="column" gap="4" className="text-slate-300">
-                  <Flex align="center" gap="3">
-                    <Box className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0" />
-                    <Text size="2">
-                      Setia Alam Mosque<br />
-                      Jalan Setia Prima T U13/T, Setia Alam, Seksyen, U13 Shah Alam, 40170 Shah Alam, Selangor
-                    </Text>
-                  </Flex>
-                  <Flex align="center" gap="3">
-                    <Box className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0" />
-                    <Text size="2">info@mirsath.org</Text>
-                  </Flex>
-                  <Flex align="center" gap="3">
-                    <Box className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0" />
-                    <Text size="2">+60 123456789</Text>
-                  </Flex>
-                  
-                  <Badge variant="soft" color="emerald" className="mt-2 w-fit">
-                    🕌 Mosque Governed
-                  </Badge>
-                </Flex>
-              </Box>
-            </Grid>
-            
-            <Separator className="my-8 opacity-20" />
-            
-            <Flex justify="between" align="center" className="text-slate-400 flex-wrap gap-4">
-              <Text size="2">
-                © 2025 MIRSATH Mutual Aid Society. All rights reserved.
+        <Box className="mt-16 py-8 border-t border-emerald-200 bg-white/50">
+          <Container size="4">
+            <Flex justify="between" align="center">
+              <Text size="2" className="text-emerald-600">
+                © {new Date().getFullYear()} Mirsath Islamic Cooperative. All rights reserved.
               </Text>
-              <Flex gap="6" className="text-xs">
-                <Link href="/terms" className="hover:text-emerald-400 transition-colors">Terms of Service</Link>
-                <Link href="/privacy" className="hover:text-emerald-400 transition-colors">Privacy Policy</Link>
-                <Link href="/sitemap" className="hover:text-emerald-400 transition-colors">Sitemap</Link>
+              <Flex gap="4">
+                <Link href="/about" className="text-sm text-emerald-600 hover:text-emerald-800">
+                  About
+                </Link>
+                <Link href="/faq" className="text-sm text-emerald-600 hover:text-emerald-800">
+                  FAQ
+                </Link>
+                
+                
+                <Link href="/admin/login" className="text-sm text-emerald-600 hover:text-emerald-800">
+                  Admin
+                </Link>
               </Flex>
             </Flex>
           </Container>

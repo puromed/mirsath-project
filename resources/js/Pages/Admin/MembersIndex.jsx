@@ -1,6 +1,7 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
-import { Card, Table, Heading } from '@radix-ui/themes';
+import { Card, Table, Heading, Flex, Button } from '@radix-ui/themes';
+import { DownloadIcon, FileTextIcon } from '@radix-ui/react-icons';
 
 export default function MembersIndex({ members = [] }) {
     return (
@@ -10,7 +11,31 @@ export default function MembersIndex({ members = [] }) {
         >
             <Head title="Members" />
             <Card>
-                <Heading size="4" mb="4">Members</Heading>
+                <Flex justify="between" align="center" mb="4">
+                    <Heading size="4">Members</Heading>
+                    <Flex gap="2">
+                        <Button asChild variant="outline" size="2">
+                            <a
+                                href="/admin/members/export"
+                                target="_blank" 
+                                rel="noopener"
+                            >
+                                <DownloadIcon />
+                                Export CSV
+                            </a>
+                        </Button>
+                        <Button asChild variant="solid" size="2" color="emerald">
+                            <a
+                                href="/admin/members/export-pdf"
+                                target="_blank" 
+                                rel="noopener"
+                            >
+                                <FileTextIcon />
+                                Export PDF
+                            </a>
+                        </Button>
+                    </Flex>
+                </Flex>
                 <Table.Root variant="surface">
                     <Table.Header>
                         <Table.Row>
@@ -31,13 +56,6 @@ export default function MembersIndex({ members = [] }) {
                         ))}
                     </Table.Body>
                 </Table.Root>
-                <a
-                    href="/admin/members/export"
-                    className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded-md mt-4"
-                    target="_blank" rel="noopener"
-                >
-                    Download CSV
-                </a> 
             </Card>
         </AdminLayout>
     );

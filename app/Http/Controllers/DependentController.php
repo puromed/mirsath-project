@@ -10,10 +10,9 @@ use Illuminate\Validation\Rule;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-
-
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class DependentController extends Controller
 {
@@ -116,5 +115,35 @@ class DependentController extends Controller
         return response()->download($tempPath, 'dependents.csv', [
             'Content-Type' => 'text/csv',
         ])->deleteFileAfterSend(true);
+    }
+
+    // Export dependents to PDF
+    public function exportDependentsPdf()
+    {
+        // Get all dependents with related member data
+        $dependents = Dependent::with('member.user')
+                              ->orderBy('created_at', 'desc')
+                              ->get();
+
+        // Calculate statistics
+        $stats = [
+            'total' => $dependents->count(),
+            'children' => $dependents->where('relationship', 'LIKE', '%child%')->count(),
+            'spouses' => $dependents->where('relationship', 'LIKE', '%spouse%')->count(),
+        ];
+
+        // Generate filename with current date
+        $filename = 'dependents-report-' . now()->format('Y-m-d') . '.pdf';
+
+        // Generate PDF using Spatie Laravel PDF
+        return Pdf::view('pdf.dependents-table', [
+                'dependents' => $dependents,
+                'stats' => $stats,
+            ])
+            ->format('a4')
+            ->orientation('landscape') // Better for table data
+            ->margins(15, 15, 15, 15) // top, right, bottom, left in mm
+            ->name($filename)
+            ->download();
     }
 }

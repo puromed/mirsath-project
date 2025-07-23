@@ -82,9 +82,6 @@ export default function FAQ({ faqData, totalFaqs }) {
                                 <Button variant="solid" color="emerald" className="bg-gradient-to-r from-emerald-600 to-emerald-700">
                                     FAQ
                                 </Button>
-                                <Button variant="ghost" color="emerald" className="hover:bg-emerald-50">
-                                    Contact
-                                </Button>
                                 <Separator orientation="vertical" size="2" />
                                 <Button variant="outline" color="emerald" asChild className="border-emerald-300 hover:bg-emerald-50">
                                     <Link href="/login">Log In</Link>
@@ -230,7 +227,7 @@ export default function FAQ({ faqData, totalFaqs }) {
                     </Box>
 
                     {/* CONTACT SECTION */}
-                    <Box className="mt-16">
+                    {/* <Box className="mt-16">
                         <Card className="p-8 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-center">
                             <ChatBubbleIcon className="w-12 h-12 mx-auto mb-4" />
                             <Heading size="6" className="mb-4">Still Need Help?</Heading>
@@ -248,7 +245,7 @@ export default function FAQ({ faqData, totalFaqs }) {
                                 </Button>
                             </Flex>
                         </Card>
-                    </Box>
+                    </Box> */}
                 </Container>
 
                 {/* FOOTER */}
@@ -265,12 +262,10 @@ export default function FAQ({ faqData, totalFaqs }) {
                                 <Link href="/faq" className="text-sm text-emerald-600 hover:text-emerald-800">
                                     FAQ
                                 </Link>
-                                <Link href="#" className="text-sm text-emerald-600 hover:text-emerald-800">
-                                    Contact
+                                <Link href="/admin/login" className="text-sm text-emerald-600 hover:text-emerald-800">
+                                    Admin
                                 </Link>
-                                <Link href="#" className="text-sm text-emerald-600 hover:text-emerald-800">
-                                    Privacy
-                                </Link>
+                               
                             </Flex>
                         </Flex>
                     </Container>

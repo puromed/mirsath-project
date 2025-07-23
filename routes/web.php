@@ -123,4 +123,12 @@ Route::middleware('auth:staff')->group(function () {
     // Route to export PDF claims
     Route::get('admin/claims/export-pdf', [AdminClaimController::class, 'exportClaimsPdf'])
     ->name('admin.claims.export.pdf');
+
+    // Route to export PDF members
+    Route::get('admin/members/export-pdf', [AdminDashboardController::class, 'exportMembersPdf'])
+    ->name('admin.members.export.pdf');
+
+    // Route to export PDF dependents
+    Route::get('admin/dependents/export-pdf', [DependentController::class, 'exportDependentsPdf'])
+    ->name('admin.dependents.export.pdf');
 });
