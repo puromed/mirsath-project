@@ -165,7 +165,7 @@ import {
         <Section size="3" py="20" className="bg-slate-50 relative z-10 -mt-20 rounded-t-2xl lg:rounded-t-3xl">
           <Container size="4">
             <Box className="text-center mb-12">
-              <Badge size="2" variant="soft" color="emerald" className="mb-4">
+              <Badge size="2" variant="soft" color="mint" className="mb-4 mt-6 px-6 py-3 text-lg font-medium">
                 Why Choose MIRSATH?
               </Badge>
               <Heading size="8" align="center" mb="4" color="emerald11" className="font-bold">
@@ -215,7 +215,7 @@ import {
           
           <Container size="4" position="relative">
             <Box className="text-center mb-16">
-              <Badge size="2" variant="soft" color="emerald" className="mb-6 px-4 py-2">
+              <Badge size="2" variant="soft" color="mint" className="mb-4 mt-6 px-6 py-3 text-lg font-medium">
                 <ClockIcon className="mr-2" />
                 Simple & Quick Process
               </Badge>

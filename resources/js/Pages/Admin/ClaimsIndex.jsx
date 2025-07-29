@@ -10,9 +10,9 @@ import {
 import { ArrowRightIcon, DownloadIcon, FileTextIcon } from '@radix-ui/react-icons';
 import AdminLayout from '@/Layouts/AdminLayout';
 
-// Time if null 
+// Date only if not null (DD/MM/YYYY format)
 const displayDate = iso =>
-    iso ? new Date(iso). toLocaleString() : '-';
+    iso ? new Date(iso).toLocaleDateString('en-GB') : '-';
 
 
 export default function ClaimsIndex({ claims }) {

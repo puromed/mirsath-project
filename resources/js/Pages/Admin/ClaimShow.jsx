@@ -4,9 +4,9 @@ import { Badge, Box, Button, Card, Flex, Grid, Heading, Text, TextArea, TextFiel
 import { ArrowLeftIcon, DownloadIcon } from '@radix-ui/react-icons';
 
 
-// Time if null 
+// Date only if not null (DD/MM/YYYY format)
 const displayDate = iso =>
-    iso ? new Date(iso). toLocaleString() : '-';
+       iso ? new Date(iso).toLocaleDateString('en-GB') : '-';
 
 // A simple component to display a piece of information
 const InfoBlock = ({ label, value, children }) => (

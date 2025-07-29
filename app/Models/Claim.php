@@ -15,6 +15,7 @@ class Claim extends Model
         'deceased_person_type',
         'date_of_death',
         'death_certificate_url',
+        'submission_date',
         'status',
         'payout_amount',
         'decision_date',
